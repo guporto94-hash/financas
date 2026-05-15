@@ -183,16 +183,11 @@ tr:hover td{background:var(--bg3);}
     <div class="card-title">Gastos por categoria</div>
     <div class="bar-chart" id="d-cat-chart"><div class="empty">Nenhum gasto neste mês</div></div>
   </div>
-  <div class="card">
-    <div class="card-title">Orçamento mensal</div>
-    <div id="d-orcamento"></div>
   </div>
 </div>
 
 <!-- GASTOS -->
 <div id="screen-gastos" class="screen">
-  <div class="card">
-    <div class="card-title">Lançar transação</div>
     <div class="form-row">
       <input type="date" id="g-data" style="min-width:130px;">
       <select id="g-tipo" onchange="toggleCampos()">
@@ -239,8 +234,6 @@ tr:hover td{background:var(--bg3);}
     </div>
   </div>
 
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <div class="card-title" style="margin:0;">Transações</div>
       <div class="month-nav" style="margin:0;gap:8px;">
         <button onclick="changeMonth(-1)" style="width:26px;height:26px;font-size:13px;">‹</button>
@@ -298,8 +291,6 @@ tr:hover td{background:var(--bg3);}
     <div class="fatura-items" id="cc-items"></div>
   </div>
 
-  <div class="card">
-    <div class="card-title">Total em cartões no mês</div>
     <div class="grid-2">
       <div class="stat"><div class="stat-label">Individual</div><div class="stat-value orange" id="ct-ind">—</div></div>
       <div class="stat"><div class="stat-label">Compartilhado</div><div class="stat-value orange" id="ct-comp">—</div></div>
@@ -313,8 +304,6 @@ tr:hover td{background:var(--bg3);}
 
 <!-- PATRIMÔNIO -->
 <div id="screen-patrimonio" class="screen">
-  <div class="card">
-    <div class="card-title">Adicionar / atualizar ativo</div>
     <div class="form-row">
       <input type="text" id="p-nome" placeholder="Nome (ex: CDB Nubank)">
       <select id="p-tipo">
@@ -332,23 +321,17 @@ tr:hover td{background:var(--bg3);}
       <button class="btn" id="btn-add-at" onclick="addAtivo()">+ Adicionar</button>
     </div>
   </div>
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <div class="card-title" style="margin:0;">Ativos</div>
       <span style="font-family:var(--mono);font-size:15px;color:var(--accent);" id="p-total">—</span>
     </div>
     <div id="p-list"><div class="empty">Nenhum ativo cadastrado</div></div>
   </div>
-  <div class="card">
-    <div class="card-title">Alocação por tipo</div>
     <div id="p-alocacao" class="bar-chart"><div class="empty">—</div></div>
   </div>
 </div>
 
 <!-- PROJEÇÃO -->
 <div id="screen-projecao" class="screen">
-  <div class="card">
-    <div class="card-title">Parâmetros</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
       <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Aporte mensal (R$)</div><input type="number" id="proj-aporte" value="12000" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;"></div>
       <div><div style="font-size:11px;color:var(--text3);margin-bottom:4px;">CDI base (% a.a.)</div><input type="number" id="proj-cdi" value="11" step="0.25" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;"></div>
@@ -358,26 +341,21 @@ tr:hover td{background:var(--bg3);}
     <button class="btn" style="width:100%;" onclick="calcProjecao()">Calcular</button>
   </div>
   <div id="proj-result" style="display:none;">
-    <div class="card">
-      <div class="card-title">Resultado</div>
       <div class="proj-row"><span>Patrimônio atual</span><span id="pr-atual">—</span></div>
       <div class="proj-row"><span>Total aportado</span><span id="pr-aportado">—</span></div>
       <div class="proj-row"><span>Rendimento estimado</span><span id="pr-rendimento">—</span></div>
       <div class="proj-row highlight"><span>Patrimônio final</span><span id="pr-final">—</span></div>
       <div class="proj-row"><span>Renda passiva mensal</span><span id="pr-renda">—</span></div>
     </div>
-    <div class="card">
-      <div class="card-title">Marcos anuais</div>
       <div id="proj-marcos"></div>
     </div>
   </div>
 </div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbxJsZyvVd2BSGIM5mFA7-C-o57_YHomx88iuGvbn2QMRvQfyFqeEChR8tw599tzdpmD/exec';
+const API='https://script.google.com/macros/s/AKfycbylwv4le0k2kS2neFEkYqZd7pGLYqITUXHqnqVoVkAcfRz1Bw_jN0eUdCKLDkc4bdw/exec';
 const CATS=['obra','financiamento','carro','rachel','delivery','streamings','assinaturas','moradia','alimentação','mercado','transporte','lazer','viagem','saúde','farmácia','educação','beleza','pet','presente','outros'];
 const COLORS=['#ff8c00','#5c9eff','#a0d420','#ff69b4','#ffb43c','#9678ff','#8264ff','#5c9eff','#ffb43c','#ffc850','#a0d420','#c8f135','#9678ff','#ff6464','#ff5050','#50c8b4','#ff96c8','#64c864','#ffd700','#888'];
-const ORC={obra:5000,financiamento:3000,carro:800,rachel:500,delivery:400,streamings:200,assinaturas:200,moradia:2000,alimentação:1500,mercado:1200,transporte:600,lazer:1000,viagem:2333,saúde:400,farmácia:200,educação:300,beleza:300,pet:0,presente:200,outros:300};
 
 let transacoes=[],ativos=[],syncing=false,filtroAtivo='todos';
 let currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear();
@@ -454,9 +432,7 @@ function renderDashboard(){
   tx.filter(t=>t.tipo==='gasto').forEach(t=>{catT[t.categoria]=(catT[t.categoria]||0)+t.valor;});
   const ents=Object.entries(catT).sort((a,b)=>b[1]-a[1]);
   const maxC=ents[0]?.[1]||1;
-  document.getElementById('d-cat-chart').innerHTML=ents.length===0?'<div class="empty">Nenhum gasto neste mês</div>':ents.map(([c,v])=>{const p=(v/maxC*100).toFixed(1);const ci=CATS.indexOf(c);const col=COLORS[ci>=0?ci:COLORS.length-1];return `<div class="bar-row"><div class="bar-row-label">${c}</div><div class="bar-outer"><div class="bar-inner" style="width:${p}%;background:${col};"><span>${fmtR(v)}</span></div></div></div>`;}).join('');
-
-  document.getElementById('d-orcamento').innerHTML=Object.entries(ORC).filter(([,m])=>m>0).map(([c,m])=>{const g=catT[c]||0;const p=Math.min(g/m*100,100).toFixed(0);const ov=g>m;const ci=CATS.indexOf(c);const col=ov?'var(--red)':COLORS[ci>=0?ci:COLORS.length-1];return `<div class="progress-wrap"><div class="progress-label"><span>${c}</span><span>${fmtR(g)} / ${fmtR(m)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${col};"></div></div></div>`;}).join('');
+  document.getElementById('d-cat-chart').innerHTML=ents.length===0?'<div class="empty">Nenhum gasto neste mês</div>':ents.map(([c,v])=>{const p=(v/maxC*100).toFixed(1);const ci=CATS.indexOf(c);const col=COLORS[ci>=0?ci:COLORS.length-1];return `<div class="bar-row"><div class="bar-row-label">${c}</div><div class="bar-outer"><div class="bar-inner" style="width:${p}%;background:${col};"><span>${fmtR(v)}</span></div></div></div>`;}).join('');const p=Math.min(g/m*100,100).toFixed(0);const ov=g>m;const ci=CATS.indexOf(c);const col=ov?'var(--red)':COLORS[ci>=0?ci:COLORS.length-1];return `<div class="progress-wrap"><div class="progress-label"><span>${c}</span><span>${fmtR(g)} / ${fmtR(m)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${col};"></div></div></div>`;}).join('');
 }
 
 function renderGastos(){
