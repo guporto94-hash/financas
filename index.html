@@ -353,7 +353,7 @@ tr:hover td{background:var(--bg3);}
 </div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbylwv4le0k2kS2neFEkYqZd7pGLYqITUXHqnqVoVkAcfRz1Bw_jN0eUdCKLDkc4bdw/exec';
+const API='https://script.google.com/macros/s/AKfycbyX5pJ2RjRzrXoHXNdWJfxZpXkmkrMR0XL9eeXlCvS2dIKd7bi5ceWlYjy4osqGy4pg/exec';
 const CATS=['obra','financiamento','carro','rachel','delivery','streamings','assinaturas','moradia','alimentação','mercado','transporte','lazer','viagem','saúde','farmácia','educação','beleza','pet','presente','outros'];
 const COLORS=['#ff8c00','#5c9eff','#a0d420','#ff69b4','#ffb43c','#9678ff','#8264ff','#5c9eff','#ffb43c','#ffc850','#a0d420','#c8f135','#9678ff','#ff6464','#ff5050','#50c8b4','#ff96c8','#64c864','#ffd700','#888'];
 
@@ -361,13 +361,33 @@ let transacoes=[],ativos=[],syncing=false,filtroAtivo='todos';
 let currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear();
 const META_APORTE=12000;
 
-async function apiCall(p){
-  const url=new URL(API);
-  Object.entries(p).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):v));
-  const r=await fetch(url.toString());
-  const j=await r.json();
-  if(!j.ok)throw new Error(j.error||'Erro');
-  return j.data;
+function apiCall(p){
+  return new Promise((resolve, reject) => {
+    const cbName = 'cb_' + Date.now();
+    const url = new URL(API);
+    Object.entries(p).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):v));
+    url.searchParams.set('callback', cbName);
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      document.body.removeChild(script);
+      reject(new Error('Timeout'));
+    }, 15000);
+    window[cbName] = (data) => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      document.body.removeChild(script);
+      if (!data.ok) reject(new Error(data.error || 'Erro'));
+      else resolve(data.data);
+    };
+    script.src = url.toString();
+    script.onerror = () => {
+      clearTimeout(timeout);
+      delete window[cbName];
+      reject(new Error('Erro de rede'));
+    };
+    document.body.appendChild(script);
+  });
 }
 
 async function syncAll(){
@@ -432,7 +452,7 @@ function renderDashboard(){
   tx.filter(t=>t.tipo==='gasto').forEach(t=>{catT[t.categoria]=(catT[t.categoria]||0)+t.valor;});
   const ents=Object.entries(catT).sort((a,b)=>b[1]-a[1]);
   const maxC=ents[0]?.[1]||1;
-  document.getElementById('d-cat-chart').innerHTML=ents.length===0?'<div class="empty">Nenhum gasto neste mês</div>':ents.map(([c,v])=>{const p=(v/maxC*100).toFixed(1);const ci=CATS.indexOf(c);const col=COLORS[ci>=0?ci:COLORS.length-1];return `<div class="bar-row"><div class="bar-row-label">${c}</div><div class="bar-outer"><div class="bar-inner" style="width:${p}%;background:${col};"><span>${fmtR(v)}</span></div></div></div>`;}).join('');const p=Math.min(g/m*100,100).toFixed(0);const ov=g>m;const ci=CATS.indexOf(c);const col=ov?'var(--red)':COLORS[ci>=0?ci:COLORS.length-1];return `<div class="progress-wrap"><div class="progress-label"><span>${c}</span><span>${fmtR(g)} / ${fmtR(m)}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%;background:${col};"></div></div></div>`;}).join('');
+  document.getElementById('d-cat-chart').innerHTML=ents.length===0?'<div class="empty">Nenhum gasto neste mês</div>':ents.map(([c,v])=>{const p=(v/maxC*100).toFixed(1);const ci=CATS.indexOf(c);const col=COLORS[ci>=0?ci:COLORS.length-1];return `<div class="bar-row"><div class="bar-row-label">${c}</div><div class="bar-outer"><div class="bar-inner" style="width:${p}%;background:${col};"><span>${fmtR(v)}</span></div></div></div>`;}).join('');
 }
 
 function renderGastos(){
@@ -560,8 +580,6 @@ function calcProjecao(){
   document.getElementById('proj-marcos').innerHTML=marcos.map(m=>`<div class="proj-row"><span>${m.ano}</span><span style="font-family:var(--mono);color:var(--accent);">${fmtM(m.saldo)}</span></div>`).join('');
 }
 
-// Precisamos adicionar a coluna pagamento na planilha
-// Atualiza o script do Apps Script para incluir o campo pagamento
 document.getElementById('g-data').value=new Date().toISOString().split('T')[0];
 toggleCampos();
 syncAll();
